@@ -577,3 +577,377 @@ console.log(Object.keys(person)) // [ 'name', 'age', 'country']
     console.log(arr2.flat(Infinity));
     // expected output: Array [0, 1, 2, 3, 4, 5]
     ```
+
+
+- ### Q. Can you explain the difference between controlled and uncontrolled components in React?
+    - Controlled and Uncontrolled components both refer to how the form data is managed within a component.
+    - #### <u>Controlled Components:</u>
+    - In the Controlled components, the form data is handled by the component state . The input feilds will be bounded with the state directly allowing to access the values. This gives more control over the form data. 
+    ``` js
+    import React, { useState } from 'react';
+
+    function ControlledComponent() {
+    const [inputValue, setInputValue] = useState('');
+
+    const handleChange = (event) => {
+        setInputValue(event.target.value);
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        alert('Submitted: ' + inputValue);
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+        <input type="text" value={inputValue} onChange={handleChange} />
+        <button type="submit">Submit</button>
+        </form>
+    );
+    }
+
+    export default ControlledComponent;
+    ```
+    - #### <u>UnControlled Components:</u>
+    - In the case of unControlled Components, the form data is handled by the  DOM itself. We can use refs to access the input values directly when needed. 
+    ```js
+    import React, { useRef } from 'react';
+
+    function UncontrolledComponent() {
+    const inputRef = useRef(null);
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        alert('Submitted: ' + inputRef.current.value);
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+        <input type="text" ref={inputRef} />
+        <button type="submit">Submit</button>
+        </form>
+    );
+    }
+
+    export default UncontrolledComponent;
+    ```
+- ### Q. Can you explain the React lifecycle methods?
+    - There are 3 lifecycle phases in react. They are Mounting,Updating and Unmounting.
+    - ### Class Components:
+    - #### <u>Mounting:</u> 
+        - The phase in which a component is being created and inserted into the DOM.
+        - In this phase, componentDidMount() will be called
+    - #### <u>Updating:</u> 
+        - The phase in which a component is being re-rendered as a result of changes to either its props or state.
+        - In this phase, shouldComponentUpdate() and ComponentWillUpdate() methods are called.
+    - - #### <u>Unmounting:</u> 
+        - The phase in which a component is being removed from the DOM.
+        - In this phase, componentWillUnmount() will be called
+    - ### Functional Components:
+    - In the functional components, the same lifecycle behaviors can be managed using useEffect hook.
+    - #### <u>Mounting and Updating:</u> 
+        - useEffect(() => { ... }, []) acts like componentDidMount().
+        - useEffect(() => { ... }, [dependencies]) acts like both componentDidUpdate() and componentWillUnmount().
+        You can return a cleanup function from useEffect to handle side effects when the component unmounts.
+    - #### <u>Unmounting:</u> 
+        - The cleanup function returned by useEffect serves the same purpose as componentWillUnmount().
+
+- ### Q. What is Hoisting in javascript?
+    - Hoisting is a javascript mechanisim where variables and functions declarations are moved to the top of the scope. 
+    - It allows to use the variables and functions before they are declared.
+    - #### Variable Hoisting:
+        - When you declare a variable using var, Javascript hoists the variable to top of its scope.
+        - It means that only the decleration is hoisted not the initialization. if we try to access the value before initializing it, we will get the value as undefined instead of actual value.
+        ``` js
+        console.log(x); // Outputs: undefined
+        var x = 5;
+        console.log(x); // Outputs: 5
+        ```
+        - Varibles declared with let and const are also hoisted but they are not initialized. They will enter into a "temporial dead zone" from the time where they are hoisted and to the time where the actual value gets assigned.
+        - Accessing those values at that time will gives the Reference Error
+        ```js
+        console.log(a); // Throws ReferenceError: Cannot access 'a' before initialization
+        let a = 10;
+        ```
+    - #### Function Hoisting:
+        - This Function Declerations are fully hoisted. means that both the function name and the body are available before the function is declared in the code.
+        ``` js
+        greet(); // Outputs: Hello!
+
+        function greet() {
+            console.log("Hello!");
+        }
+         ```
+         - In the case of Funciton Expression, means a function assigning to the variable or the arrow functions, this hoisting will not work.
+         - In this case, this will be treated as a varible only.
+         ``` js
+        greet(); // Throws TypeError: greet is not a function
+        var greet = function() {
+            console.log("Hello!");
+        };
+         ```
+- ### Q. What is Event Loop?
+    - Event loop is essential for managing asynchronous operations in JavaScript, enabling non-blocking behavior.
+    - This helps to handle tasks like user Interactions, timers, Promises etc which can block the main thread.
+    - The Purpose of the Event loop is to check the call stack continuously,whenever the call stack is empty, Event loop takes the task from the ( microstack Queue > callback Queue) and pushes it to callstack.
+    - Here the priority is grater for the microstack queue than the callback queue.
+    - Microstack queue involves the tasks like Promises and MutationObserver callbacks.
+    - Callback Queue takes the tasks like setTimeout, setInterval, I/O Operations and user Interactions.
+    ``` js
+    console.log("Start");
+    setTimeout(() => {
+        console.log("Timeout 1");
+    }, 0);
+    Promise.resolve().then(() => {
+        console.log("Promise 1");
+    }).then(() => {
+        console.log("Promise 2");
+    });
+    setTimeout(() => {
+        console.log("Timeout 2");
+    }, 0);
+    console.log("End");
+
+    Output:
+    // Start
+    // End
+    // Promise 1
+    // Promise 2
+    // Timeout 1
+    // Timeout 2
+    ```
+- ### Q. What is difference between setTimeout and setInterval?
+    - setTimeout function is used to ececute the function only once after the specified interval.
+    - setInterval function is used to execute the function repeadtly after the delay.
+    - These both functions will geerate a interval ID that can be cleared by using clearTimeout function
+    ```js
+    const timeoutId = setTimeout(() => {
+        console.log("This won't run");
+    }, 2000);
+
+    clearTimeout(timeoutId);
+
+    const intervalId = setInterval(() => {
+        console.log("This will stop");
+    }, 2000);
+
+    clearInterval(intervalId);
+    ```
+- ### Q. Rest and Spread Operator.
+    - #### Rest Operator:
+    - The Rest Operator (...) allows to collect multiple arguments into a single array
+    - This mainly helps to deals with the functions that gets varying number of arguments to the function
+    - Some of the use cases are:
+        - Accepts multiple args to the function and can take as array as an input.
+        ```js
+        function sum(...numbers) {
+            return numbers.reduce((acc, curr) => acc + curr, 0);
+        }
+
+        console.log(sum(1, 2, 3, 4)); // Outputs: 10
+        ```
+        - Destructuring Assignments: We can use rest Operator to extract the remaining properties from an object or array.
+        ```js
+        const array = [1, 2, 3, 4, 5];
+        const [first, second, ...rest] = array;
+        console.log(first); // Outputs: 1
+        console.log(second); // Outputs: 2
+        console.log(rest); // Outputs: [3, 4, 5]
+        ```
+        - This Rest operator is uesd to combine arrays 
+        ```js
+        const array1 = [1, 2, 3]
+        const array2 = [4, 5, 6]
+        const merged = [...array1, ...array2]
+        // [1, 2, 3, 4, 5, 6]
+        ```
+        - Spread Operator: This Spread Operator is used to expand or spread objects or arrays into individual elements.
+        - This spread operator is used to create shallow copy of arrays or objects.
+        ```js
+        const originalArray = [1, 2, 3];
+        const copiedArray = [...originalArray];
+        console.log(copiedArray); // Outputs: [1, 2, 3]
+
+        const originalObject = { x: 1, y: 2 };
+        const copiedObject = { ...originalObject };
+        console.log(copiedObject); // Outputs: { x: 1, y: 2 }
+        ```
+    - This spread operator is also used to create array or object with the existing ones.
+    ```js
+    const array = [1, 2, 3];
+        const newArray = [...array, 4, 5];
+        console.log(newArray); // Outputs: [1, 2, 3, 4, 5]
+
+        const obj = { x: 1, y: 2 };
+        const newObject = { ...obj, z: 3 };
+        console.log(newObject); // Outputs: { x: 1, y: 2, z: 3 }
+    ```
+    - This spread operator is also used to pass elements of an array as individual arguments to a function.
+    ```js
+    const numbers = [1, 2, 3];
+    const sum = (a, b, c) => a + b + c;
+    console.log(sum(...numbers)); // Outputs: 6
+    ``` 
+- ### Q. What are Closure?
+    - A closure is formed when the function retain its access to its lexical scope, then the closure is formed.
+    - When an inner function is defined inside an outer function, it forms a closure with the outer variable function.
+    - Below is the example of closure
+    ```js
+    function outerFunction() {
+    let outerVariable = 'I am from the outer function';
+
+    function innerFunction() {
+        console.log(outerVariable); // Accessing outerVariable
+    }
+
+    return innerFunction; // Return the inner function
+    }
+
+    const myClosure = outerFunction(); // Executes outerFunction, returns innerFunction
+    myClosure(); // Outputs: I am from the outer function
+    ```
+    - Closures helps to acheive Encapsulation. It can restrict to access the private variables.
+    ```js
+    function createCounter() {
+    let count = 0; // Private variable
+
+    return {
+        increment: function() {
+            count++;
+            return count;
+        },
+        decrement: function() {
+            count--;
+            return count;
+        },
+        getCount: function() {
+            return count;
+        }
+    };
+    }
+
+    const counter = createCounter();
+    console.log(counter.increment()); // Outputs: 1
+    console.log(counter.increment()); // Outputs: 2
+    console.log(counter.getCount()); // Outputs: 2
+    ```
+- ### Q. What is difference between a Promise and a Callback?
+
+    - Both the promise and callback are used to handle asynchronous operations in the code.
+
+    - Callback: A callback is a function passed as an argument to another function, which is then executed after some operation is completed. It is a way to ensure that certain code runs only after a specific asynchronous task finishes.
+    - Promise: A promise is an object that represents the eventual completion (or failure) of an asynchronous operation.Promises provide a more structured way to handle asynchronous tasks and chain operations.
+    - Callback Example:
+    ```js
+    function fetchData(callback) {
+    setTimeout(() => {
+        const data = { message: "Hello, World!" };
+        callback(data);
+    }, 1000);
+    }
+
+    fetchData((result) => {
+        console.log(result.message); // Outputs: Hello, World!
+    });
+    ```
+    - Promise Example:
+    ```js
+    function fetchData() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const data = { message: "Hello, World!" };
+            resolve(data);
+        }, 1000);
+    });
+    }
+
+    fetchData()
+        .then((result) => {
+            console.log(result.message); // Outputs: Hello, World!Destructuring
+            - #### Rest and Spread Operators
+            - #### Promises
+            - #### Classes
+            - #### Modules including exports and imports
+            
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    ```
+- ### Q. List the Features of ES6?
+    -  Let and Const
+    -  Arrow Functions
+    -  Template Literals
+    -  Destructuring
+    -  Rest and Spread Operators
+    -  Promises
+    -  Classes
+    -  Modules including exports and imports
+    - Iterators and Generators
+        - Below is example for the Iterators.
+        - This Iterator has a next function which will have a value which holds the actual value and a done boolean to represent whether next values are avilable to iterate or not.
+        - Iterators and generators provides a mechanisim for customizing the behaviour of (for...of ) loop.
+        - These Iterators and Generators functions helps to traverse between our own custum datatypes and access the values in it.
+        ```js 
+        const myIterator = {
+            index: 0,
+            values: ['a', 'b', 'c'],
+            next: function() {
+                if (this.index < this.values.length) {
+                    return { 
+                        value: this.values[this.index++], 
+                        done: false 
+                    };
+                } else {
+                    return { done: true }; // Indicate completion
+                }
+            }
+        };
+
+        // Using the iterator
+        console.log(myIterator.next()); // { value: 'a', done: false }
+        console.log(myIterator.next()); // { value: 'b', done: false }
+        console.log(myIterator.next()); // { value: 'c', done: false }
+        console.log(myIterator.next()); // { done: true }
+        ```
+        - Generator Function: This Generator function is a special type of function, similar to the Iterator function. 
+        - Here we dont have to manage the state internally, dont have to the implement the next() function. we can simply use the yeild keyword. The syntax to define the Generator function is by using the *keyword after the keyword function. 
+        - Below is the example of the Generator function.
+        ```js
+        function* generator() {
+        yield 1;
+        yield 2;
+        yield 3;
+        }
+
+        const gen = generator(); // "Generator { }"
+
+        console.log(gen.next().value); // 1
+        console.log(gen.next().value); // 2
+        console.log(gen.next().value); // 3
+        ```
+    - Map, Set, WeakMap, and WeakSet
+        - Map: A Map is a collection of key-value pairs where both keys and values can be of any type.
+        - Set: A Set is a collection of unique values. It allows you to store any type of values, but it automatically removes duplicates.
+        - WeakMap: A WeakMap is similar to a Map, but its keys must be objects. if there are no references to an object used as a key, the entry will be garbage collected.
+        - WeakSet: SA WeakSet is similar to a Set, but its values must be objects.Similar to the weakmap, if there are no references to an object used as a key, the entry will be garbage collected.
+        ```js
+        let weakMap = new WeakMap();
+        let obj = {};
+
+        weakMap.set(obj, "data");
+
+        // At this point, obj is still accessible, and the WeakMap holds a weak reference to it.
+        console.log(weakMap.get(obj)); // "data"
+
+        // If we remove the strong reference to obj:
+        obj = null; // Now, there's no other reference to the original object.
+
+        // The garbage collector can now collect the original object,
+        // and thus the entry in the WeakMap is also cleaned up.
+        ```
+    - In summary, WeakMap and WeakSet provide a way to hold references to objects without preventing their garbage collection, making them useful for managing memory in applications efficiently.
+    
+    - Object.assign() method
+
+    
