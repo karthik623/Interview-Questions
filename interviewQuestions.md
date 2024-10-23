@@ -947,7 +947,44 @@ console.log(Object.keys(person)) // [ 'name', 'age', 'country']
         // and thus the entry in the WeakMap is also cleaned up.
         ```
     - In summary, WeakMap and WeakSet provide a way to hold references to objects without preventing their garbage collection, making them useful for managing memory in applications efficiently.
-    
+
     - Object.assign() method
 
-    
+- ### Q. Explain the Lifecycle methods of React in class based and Functional Based?
+    - #### Class Based LifeCycle Methods:
+    - Mounting:
+        - Constructer()
+        - static getDerivedStateFromProps()
+        - render()
+        - **ComponentDidMount()**
+    - Updating phase:
+        - static getDerivedStateFromProps()
+        - **shouldComponentUpdate()**
+        - render()
+        - getSnapshotBeforeUpdate()
+        - **ComponentDidUpdate**
+    - Unmounting Phase:
+        - ComponentDidUnmount()
+    - #### Functional Based LifeCycle Methods:
+        - All these methods are covered in useEffect. 
+        - **Mounting (componentDidMount)** : When you pass an empty dependency array ([]) to useEffect, it runs only once after the component mounts, similar to componentDidMount in class components.
+        ```js
+        useEffect(() => {
+            // Code to run on mount (e.g., fetch data)
+        }, []); // Runs only once
+        ```
+        - **Updating (componentDidUpdate)** : If you provide specific dependencies in the dependency array, useEffect runs after every render when those dependencies change, similar to componentDidUpdate.
+        ```js
+        useEffect(() => {
+            // Code to run when 'someValue' changes
+        }, [someValue]); // Runs when 'someValue' changes
+        ```
+        - **Unmounting (componentWillUnmount)** : To perform cleanup when a component is unmounted, you can return a cleanup function from useEffect. This is analogous to componentWillUnmount.
+        ```js
+        useEffect(() => {
+            // Setup (e.g., subscribing to a service)
+            return () => {
+                // Cleanup (e.g., unsubscribing)
+            };
+        }, []); // Runs cleanup when unmounted
+        ```
